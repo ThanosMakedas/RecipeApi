@@ -5,11 +5,11 @@ namespace RecipeApi.Services;
 
 public interface IRecipeService
 {
-    IEnumerable<Recipe> GetAllRecipes();
-    Recipe? GetRecipeById(int id);
-    IEnumerable<Recipe> SearchRecipes(string term);
-    IEnumerable<Recipe> GetRecipesByDifficulty(string difficulty);
-    Recipe CreateRecipe(CreateRecipeDto dto);
-    Recipe? UpdateRecipe(int id, UpdateRecipeDto dto);
-    bool DeleteRecipe(int id);
+    Task<IEnumerable<Recipe>> GetAllRecipesAsync();
+    Task<Recipe?> GetRecipeByIdAsync(int id);
+    Task<IEnumerable<Recipe>> SearchRecipesAsync(string term);
+    Task<IEnumerable<Recipe>> GetRecipesByDifficultyAsync(string difficulty);
+    Task<Recipe> CreateRecipeAsync(CreateRecipeDto dto);
+    Task<Recipe?> UpdateRecipeAsync(int id, UpdateRecipeDto dto);
+    Task<bool> DeleteRecipeAsync(int id);
 }

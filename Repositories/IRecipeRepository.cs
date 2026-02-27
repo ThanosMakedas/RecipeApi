@@ -4,11 +4,11 @@ namespace RecipeApi.Repositories;
 
 public interface IRecipeRepository
 {
-    IEnumerable<Recipe> GetAll();
-    Recipe? GetById(int id);
-    IEnumerable<Recipe> Search(string term);
-    IEnumerable<Recipe> GetByDifficulty(string difficulty);
-    Recipe Add(Recipe recipe);
-    Recipe? Update(int id, Recipe recipe);
-    bool Delete(int id);
+    Task<IEnumerable<Recipe>> GetAllAsync();
+    Task<Recipe?> GetByIdAsync(int id);
+    Task<IEnumerable<Recipe>> SearchAsync(string term);
+    Task<IEnumerable<Recipe>> GetByDifficultyAsync(string difficulty);
+    Task<Recipe> AddAsync(Recipe recipe);
+    Task<Recipe?> UpdateAsync(int id, Recipe recipe);
+    Task<bool> DeleteAsync(int id);
 }
