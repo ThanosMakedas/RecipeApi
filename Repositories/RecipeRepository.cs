@@ -8,45 +8,47 @@ public class RecipeRepository : IRecipeRepository
     private int _nextRecipeId = 1;
     private int _nextIngredientId = 1;
 
-    public IEnumerable<Recipe> GetAll()
+    public Task<IEnumerable<Recipe>> GetAllAsync()
     {
-        return _recipes;
+        return Task.FromResult<IEnumerable<Recipe>>(_recipes);
     }
 
-    public Recipe? GetById(int id)
+    public Task<Recipe?> GetByIdAsync(int id)
     {
-        return _recipes.FirstOrDefault(r => r.Id == id);
+        var recipe = _recipes.FirstOrDefault(r => r.Id == id);
+        return Task.FromResult(recipe);
     }
 
-    public IEnumerable<Recipe> Search(string term)
+    public Task<IEnumerable<Recipe>> SearchAsync(string term)
     {
         var lowerTerm = term.ToLowerInvariant();
-
-        return _recipes.Where(r =>
+        var result = _recipes.Where(r =>
             r.Name.Contains(lowerTerm, StringComparison.OrdinalIgnoreCase) ||
             r.Description.Contains(lowerTerm, StringComparison.OrdinalIgnoreCase) ||
             r.Ingredients.Any(i => i.Name.Contains(lowerTerm, StringComparison.OrdinalIgnoreCase)));
+            
+        return Task.FromResult<IEnumerable<Recipe>>(result);
     }
 
-    public IEnumerable<Recipe> GetByDifficulty(string difficulty)
+    public Task<IEnumerable<Recipe>> GetByDifficultyAsync(string difficulty)
     {
-        return _recipes.Where(r =>
-            r.Difficulty.Equals(difficulty, StringComparison.OrdinalIgnoreCase));
+        var result = _recipes.Where(r => r.Difficulty.Equals(difficulty, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<Recipe>>(result);
     }
 
-    public Recipe Add(Recipe recipe)
+    public Task<Recipe> AddAsync(Recipe recipe)
     {
         recipe.Id = _nextRecipeId++;
         AssignIngredientIds(recipe.Ingredients);
         _recipes.Add(recipe);
-        return recipe;
+        return Task.FromResult(recipe);
     }
 
-    public Recipe? Update(int id, Recipe recipe)
+    public Task<Recipe?> UpdateAsync(int id, Recipe recipe)
     {
-        var existing = GetById(id);
+        var existing = _recipes.FirstOrDefault(r => r.Id == id);
         if (existing is null)
-            return null;
+            return Task.FromResult<Recipe?>(null);
 
         existing.Name = recipe.Name;
         existing.Description = recipe.Description;
@@ -59,16 +61,17 @@ public class RecipeRepository : IRecipeRepository
 
         AssignIngredientIds(existing.Ingredients);
 
-        return existing;
+        return Task.FromResult<Recipe?>(existing);
     }
 
-    public bool Delete(int id)
+    public Task<bool> DeleteAsync(int id)
     {
-        var recipe = GetById(id);
+        var recipe = _recipes.FirstOrDefault(r => r.Id == id);
         if (recipe is null)
-            return false;
+            return Task.FromResult(false);
 
-        return _recipes.Remove(recipe);
+        _recipes.Remove(recipe);
+        return Task.FromResult(true);
     }
 
     private void AssignIngredientIds(List<Ingredient> ingredients)

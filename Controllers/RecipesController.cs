@@ -16,16 +16,16 @@ public class RecipesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var recipes = _recipeService.GetAllRecipes();
+        var recipes = await _recipeService.GetAllRecipesAsync();
         return Ok(recipes);
     }
 
     [HttpGet("{id:int}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var recipe = _recipeService.GetRecipeById(id);
+        var recipe = await _recipeService.GetRecipeByIdAsync(id);
         if (recipe is null)
             return NotFound();
 
@@ -33,33 +33,33 @@ public class RecipesController : ControllerBase
     }
 
     [HttpGet("search")]
-    public IActionResult Search([FromQuery] string q)
+    public async Task<IActionResult> Search([FromQuery] string q)
     {
         if (string.IsNullOrWhiteSpace(q))
             return BadRequest("Search term cannot be empty.");
 
-        var recipes = _recipeService.SearchRecipes(q);
+        var recipes = await _recipeService.SearchRecipesAsync(q);
         return Ok(recipes);
     }
 
     [HttpGet("difficulty/{level}")]
-    public IActionResult GetByDifficulty(string level)
+    public async Task<IActionResult> GetByDifficulty(string level)
     {
-        var recipes = _recipeService.GetRecipesByDifficulty(level);
+        var recipes = await _recipeService.GetRecipesByDifficultyAsync(level);
         return Ok(recipes);
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] CreateRecipeDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateRecipeDto dto)
     {
-        var recipe = _recipeService.CreateRecipe(dto);
+        var recipe = await _recipeService.CreateRecipeAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = recipe.Id }, recipe);
     }
 
     [HttpPut("{id:int}")]
-    public IActionResult Update(int id, [FromBody] UpdateRecipeDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateRecipeDto dto)
     {
-        var recipe = _recipeService.UpdateRecipe(id, dto);
+        var recipe = await _recipeService.UpdateRecipeAsync(id, dto);
         if (recipe is null)
             return NotFound();
 
@@ -67,9 +67,9 @@ public class RecipesController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var deleted = _recipeService.DeleteRecipe(id);
+        var deleted = await _recipeService.DeleteRecipeAsync(id);
         if (!deleted)
             return NotFound();
 
